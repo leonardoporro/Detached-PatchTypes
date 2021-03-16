@@ -55,4 +55,6 @@ Assert.False(changeTracking.IsSet("Date"));
 More info and examples will be added later.
 Check unit tests for more samples!
 
+##Note: As in any other proxy tool, properties must be marked as virtual in order to override them with the proper dirty tracking code.
+
 ### Any help on debugging, or adding new features is very welcome!
