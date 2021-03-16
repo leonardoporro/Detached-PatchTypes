@@ -27,7 +27,7 @@ System.Text.Json serializer can be configured to deserialize DTOs to patch types
 
 
 
-´´´csharp
+```csharp
 JsonSerializerOptions jsonOptions = new JsonSerializerOptions();
 // configure the serializer
 jsonOptions.Converters.Add(new PatchJsonConverterFactory());
@@ -48,7 +48,7 @@ IPatch changeTracking = (IPatch)entity;
 Assert.True(changeTracking.IsSet("Name"));
 Assert.True(changeTracking.IsSet("Id"));
 Assert.False(changeTracking.IsSet("Date"));
-´´´
+```
 
 More info and examples will be added later.
 Check unit tests for more samples!
