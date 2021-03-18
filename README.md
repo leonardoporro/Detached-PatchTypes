@@ -1,7 +1,7 @@
 ![Detached Banner](banner.png?raw=true)
 
 # Patch Types
-#### What is it
+### What is it
 Allows to create a proxy type for a given DTO that implements IPatch interface and allows to check for dirty (or set) properies. It also provides a JsonConverter that handles IPatch types.
 It's a part of [Detached.Mappers](https://github.com/leonardoporro/Detached-Mapper) library.
 
