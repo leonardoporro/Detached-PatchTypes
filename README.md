@@ -5,7 +5,7 @@
 Allows to create a proxy type for a given DTO that implements IPatch interface and allows to check for dirty (or set) properies. It also provides a JsonConverter that handles IPatch types.
 It's a part of [Detached.Mappers](https://github.com/leonardoporro/Detached-Mapper) library.
 
-## What does it solve
+### What does it solve
 Unlike JavaScript, C# does not provide the 'undefined' value to check what properties were set during the deserialization of a 
 request or file.
 This library creates proxy types that internally keep tracking of the dirty state of each property.
