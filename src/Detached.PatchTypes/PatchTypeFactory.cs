@@ -43,13 +43,13 @@ namespace Detached.PatchTypes
         {
             return _proxyTypes.GetOrAdd(type, CreateType);
         }
- 
+
         static Type CreateType(Type type)
         {
             if (type.GetConstructor(new Type[0]) == null)
                 throw new PatchProxyTypeException($"Type {type} doesn't have an empty constructor.");
 
-            RuntimeTypeBuilder proxyBuilder = new RuntimeTypeBuilder($"PatchProxyTypeFactory.{type.FullName}Patch", type);
+            RuntimeTypeBuilder proxyBuilder = new RuntimeTypeBuilder($"{type.FullName}_Patch{Guid.NewGuid().ToString().Replace("-", "")}", type);
 
             FieldBuilder modified = proxyBuilder.DefineField("_modified", typeof(HashSet<string>), FieldAttributes.Private);
             var modifiedField = Field(proxyBuilder.This, modified);
