@@ -27,8 +27,6 @@ Assert.True(entityChanges.IsSet("Name"));
 
 System.Text.Json serializer can be configured to deserialize DTOs to patch types automatically.
 
-
-
 ```csharp
 JsonSerializerOptions jsonOptions = new JsonSerializerOptions();
 // configure the serializer
@@ -52,9 +50,54 @@ Assert.True(changeTracking.IsSet("Id"));
 Assert.False(changeTracking.IsSet("Date"));
 ```
 
-More info and examples will be added later.
-Check unit tests for more samples!
+#### Note: As in any other proxy tool, properties must be marked as virtual in order to override them with the proper dirty tracking code.
 
-## Note: As in any other proxy tool, properties must be marked as virtual in order to override them with the proper dirty tracking code.
+## Configure
+PatchJsonConverterFactory takes a IPachTypeInfoProvider as a parameter. This class has the responsability of determine if the type should be 
+patched or not.
+Default is DefaultPatchTypeInfoProvider, that will patch everything but primitives in .Primitives property.
+AnnotationPatchTypeInfoProvider checks for [UsePach] attribute before allow the patch creation.
 
-### Any help on debugging, or adding new features is very welcome!
+## Integrate to MVC
+In order to get Patch Types in the bodies of Post methods, in Startup.cs, add the converter to main serializer like this: 
+AnnotationPatchTypeInfoProvider is the preferred method, as you may not need all types to be proxied.
+
+```charp
+services.AddControllers().AddJsonOptions(j =>
+{
+    j.JsonSerializerOptions.Converters.Add(new PatchJsonConverterFactory(new AnnotationPatchTypeInfoProvider()));
+});
+```
+Then add the [UsePach] attribute to your model:
+ 
+```csharp
+ [UsePatch]
+    public class SampleModel
+    {
+        public virtual int Id { get; set; }
+
+        public virtual string Name { get; set; }
+
+        public virtual DateTime? DateTime { get; set; }
+    }
+```
+
+Write your controller and enjoy!
+
+```csharp
+ [HttpPost]
+public IActionResult PostPatcheableModel([FromBody] SampleModel model)
+{
+    // at this point, model is a proxy that inherits SampleModel and implements IPach for other libs like Detached.Mappers
+    // (or your library!) that need to check property status.
+
+    // just some code to print the status of the properties
+    IPatch patch = (IPatch)model;
+
+    // use patch.IsSet(propName) to check the status of the properties. Or install Detached.Mappers.EntityFramework to map directly to EF Core.
+}
+```
+
+*Check Sample folder for a working example!*
+
+#### Any help on debugging, or adding new features is very welcome!

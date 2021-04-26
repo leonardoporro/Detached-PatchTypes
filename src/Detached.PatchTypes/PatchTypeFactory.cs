@@ -64,14 +64,12 @@ namespace Detached.PatchTypes
 
                     proxyBuilder.OverrideMethod(propInfo.GetSetMethod(),
                         new[] { valueExpr },
-                        If(NotEqual(baseGet, valueExpr),
-                            Then(
-                                If(IsNull(modifiedField),
-                                    Assign(modifiedField, New(typeof(HashSet<string>)))
-                                ),
-                                Call("Add", modifiedField, Constant(propInfo.Name)),
-                                Call(proxyBuilder.Base, propInfo.SetMethod, valueExpr)
-                            )
+                        Block(
+                            If(IsNull(modifiedField),
+                                Assign(modifiedField, New(typeof(HashSet<string>)))
+                            ),
+                            Call("Add", modifiedField, Constant(propInfo.Name)),
+                            Call(proxyBuilder.Base, propInfo.SetMethod, valueExpr)
                         )
                     );
                 }
@@ -86,7 +84,7 @@ namespace Detached.PatchTypes
             );
 
             var propNameParam = Parameter(typeof(string), "propName");
-            proxyBuilder.DefineMethod("IsSet", 
+            proxyBuilder.DefineMethod("IsSet",
                new[] { propNameParam },
                Block(
                    Variable("result", Constant(false), out Expression result),
