@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>5.0.2</Version>
+    <Authors>Leonardo Porro</Authors>
+    <Company>Leonardo Porro</Company>
+    <Product>Detached Patch Types</Product>
+    <Description>
+      Allows to create a proxy type of a given DTO that implements IPatch interface and allows to check for dirty (or set) properies. It also provides a JsonConverter that handles IPatch types.
+      This library is a part of Detached.Mappers.
+    </Description>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageIcon>logo.png</PackageIcon>
+    <PackageProjectUrl>https://github.com/leonardoporro/Detached-PatchTypes</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/leonardoporro/Detached-PatchTypes</RepositoryUrl>
+    <PackageTags>patch, proxy, dto, dirty, undefined, json</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="..\..\logo.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Detached.PatchTypes\Detached.PatchTypes.csproj" />
+  </ItemGroup>
+
+</Project>

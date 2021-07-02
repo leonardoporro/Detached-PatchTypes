@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Detached.PatchTypes.Newtonsoft\Detached.PatchTypes.Newtonsoft.csproj" />
     <ProjectReference Include="..\..\src\Detached.PatchTypes\Detached.PatchTypes.csproj" />
   </ItemGroup>
 
