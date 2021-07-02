@@ -61,6 +61,8 @@ AnnotationPatchTypeInfoProvider checks for [UsePach] attribute before allow the 
 ## Integrate to MVC
 In order to get Patch Types in the bodies of Post methods, in Startup.cs, add the converter to main serializer like this: 
 AnnotationPatchTypeInfoProvider is the preferred method, as you may not need all types to be proxied.
+You can write your own, just don't forget to check if the type you are patching is not already a patch type, otherwise a stack overflow
+will occur.
 
 ```charp
 services.AddControllers().AddJsonOptions(j =>
@@ -74,7 +76,7 @@ Then add the [UsePach] attribute to your model:
  [UsePatch]
     public class SampleModel
     {
-        public virtual int Id { get; set; }
+        public virtual int Id { get; set; } // don't forget to add virtual, otherwise, patch factory won't be able to override.
 
         public virtual string Name { get; set; }
 
@@ -85,7 +87,7 @@ Then add the [UsePach] attribute to your model:
 Write your controller and enjoy!
 
 ```csharp
- [HttpPost]
+[HttpPost]
 public IActionResult PostPatcheableModel([FromBody] SampleModel model)
 {
     // at this point, model is a proxy that inherits SampleModel and implements IPach for other libs like Detached.Mappers
