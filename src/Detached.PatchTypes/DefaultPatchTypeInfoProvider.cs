@@ -35,10 +35,9 @@ namespace Detached.PatchTypes
 
         public virtual bool ShouldPatch(Type type)
         {
-            
-            if (typeof(IPatch).IsAssignableFrom(type))
+            if (typeof(IPatch).IsAssignableFrom(type) && !type.IsInterface)
                 return false; // do not patch types already patched
-            if (type.IsEnum)
+            else if (type.IsEnum)
                 return false; // do not patch enums
             else if (type.IsGenericType && Primitives.Contains(type.GetGenericTypeDefinition()))
                 return false; // do not patch any generic type containted in the primitive list

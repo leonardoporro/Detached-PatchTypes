@@ -58,7 +58,8 @@ namespace Detached.PatchTypes
 
         static Type CreateInterfaceProxy(Type type)
         {
-            RuntimeTypeBuilder proxyBuilder = new RuntimeTypeBuilder($"{type.FullName}_Patch{Guid.NewGuid().ToString().Replace("-", "")}", typeof(object));
+            string typeName = $"{type.FullName}_Patch{Guid.NewGuid().ToString().Replace("-", "")}";
+            RuntimeTypeBuilder proxyBuilder = new RuntimeTypeBuilder(typeName);
 
             FieldBuilder modified = proxyBuilder.DefineField("_modified", typeof(HashSet<string>), FieldAttributes.Private);
             var modifiedField = Field(proxyBuilder.This, modified);
@@ -80,11 +81,18 @@ namespace Detached.PatchTypes
                             propInfo.PropertyType,
                             field,
                             value,
-                            Assign(field, value));
+                            Block(typeof(void), new Expression[]
+                            {
+                                If(IsNull(modifiedField),
+                                    Assign(modifiedField, New(typeof(HashSet<string>)))
+                                ),
+                                Call("Add", modifiedField, Constant(propInfo.Name)),
+                                Assign(field, value)
+                            }));
                     }
                 }
             }
- 
+
             proxyBuilder.DefineMethod("Reset", null,
                 Block(
                     If(IsNotNull(modifiedField),

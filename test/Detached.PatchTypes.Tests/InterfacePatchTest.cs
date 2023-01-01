@@ -13,16 +13,14 @@ namespace Detached.Mappers.Tests.Patching
 
             entity.Name = "newName";
             entity.ModifiedOn = DateTime.Now;
+ 
+            Assert.True(entity.IsSet("Name"));
+            Assert.True(entity.IsSet("ModifiedOn"));
 
-            IPatch entityChanges = (IPatch)entity;
+            entity.Reset();
 
-            Assert.True(entityChanges.IsSet("Name"));
-            Assert.False(entityChanges.IsSet("ModifiedOn"));
-
-            entityChanges.Reset();
-
-            Assert.False(entityChanges.IsSet("Name"));
-            Assert.False(entityChanges.IsSet("ModifiedOn"));
+            Assert.False(entity.IsSet("Name"));
+            Assert.False(entity.IsSet("ModifiedOn"));
         }
     }
 

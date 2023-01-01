@@ -1,6 +1,5 @@
-﻿using Detached.PatchTypes.Annotations;
+﻿using Detached.PatchTypes.SampleRestApi.Model;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Text;
 
 namespace Detached.PatchTypes.SampleRestApi.Controllers
@@ -17,34 +16,18 @@ namespace Detached.PatchTypes.SampleRestApi.Controllers
         /// </summary>
         /// <param name="model"></param>
         [HttpPost]
-        public IActionResult PostPatcheableModel([FromBody] SampleModel model)
+        public IActionResult PostPatcheableModel([FromBody]IEntity model)
         {
-            // at this point, model is a proxy that inherits SampleModel and implements IPach for other libs like Detached.Mappers
-            // (or your library!) that need to check property status.
-
-            // just some code to print the status of the properties
-            IPatch patch = (IPatch)model;
-
             StringBuilder stringBuilder = new StringBuilder();
-            foreach (string propName in new[] { nameof(SampleModel.Id), nameof(SampleModel.Name), nameof(SampleModel.DateTime) })
+            foreach (var propInfo in model.GetType().GetProperties())
             {
-                if (patch.IsSet(propName))
-                    stringBuilder.AppendLine($"{propName} is set");
+                if (model.IsSet(propInfo.Name))
+                    stringBuilder.AppendLine($"{propInfo.Name} is SET");
                 else
-                    stringBuilder.AppendLine($"{propName} is not set");
+                    stringBuilder.AppendLine($"{propInfo.Name} is NOT SET");
             }
 
             return Ok(stringBuilder.ToString());
         }
-    }
-
-    [UsePatch]
-    public class SampleModel
-    {
-        public virtual int Id { get; set; }
-
-        public virtual string Name { get; set; }
-
-        public virtual DateTime? DateTime { get; set; }
     }
 }

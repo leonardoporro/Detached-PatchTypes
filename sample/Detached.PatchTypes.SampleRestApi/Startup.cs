@@ -17,7 +17,7 @@ namespace Detached.PatchTypes.SampleRestApi
         {
             services.AddControllers().AddJsonOptions(j =>
             {
-                j.JsonSerializerOptions.Converters.Add(new PatchJsonConverterFactory(new AnnotationPatchTypeInfoProvider()));
+                j.JsonSerializerOptions.Converters.Add(new PatchJsonConverterFactory(new DefaultPatchTypeInfoProvider()));
             });
 
             services.AddSwaggerGen(c =>
