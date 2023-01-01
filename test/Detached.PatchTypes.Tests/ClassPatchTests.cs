@@ -4,11 +4,11 @@ using Xunit;
 
 namespace Detached.Mappers.Tests.Patching
 {
-    public class PatchTests
+    public class ClassPatchTests
     {
         [Fact]
-        public void create_proxy_patch()
-        {
+        public void create_class_proxy()
+        { 
             Entity entity = PatchTypeFactory.Create<Entity>();
 
             entity.Name = "newName";
@@ -38,7 +38,7 @@ namespace Detached.Mappers.Tests.Patching
         {
             Assert.Throws<PatchProxyTypeException>(() => PatchTypeFactory.Create<EntityWithConstructor>());
         }
-         
+
         public class EntityWithConstructor
         {
             public EntityWithConstructor(int id)

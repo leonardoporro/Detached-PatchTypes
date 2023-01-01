@@ -46,6 +46,74 @@ namespace Detached.PatchTypes
 
         static Type CreateType(Type type)
         {
+            if (type.IsInterface)
+            {
+                return CreateInterfaceProxy(type);
+            }
+            else
+            {
+                return CreateClassProxy(type);
+            }
+        }
+
+        static Type CreateInterfaceProxy(Type type)
+        {
+            RuntimeTypeBuilder proxyBuilder = new RuntimeTypeBuilder($"{type.FullName}_Patch{Guid.NewGuid().ToString().Replace("-", "")}", typeof(object));
+
+            FieldBuilder modified = proxyBuilder.DefineField("_modified", typeof(HashSet<string>), FieldAttributes.Private);
+            var modifiedField = Field(proxyBuilder.This, modified);
+
+            List<Type> ifaceTypes = new List<Type>(type.GetInterfaces()) { type };
+
+            foreach (Type ifaceType in ifaceTypes)
+            {
+                foreach (PropertyInfo propInfo in ifaceType.GetRuntimeProperties())
+                {
+                    if (!proxyBuilder.Properties.ContainsKey(propInfo.Name) && propInfo.CanRead && propInfo.CanWrite)
+                    {
+                        var fieldInfo = proxyBuilder.DefineField("_" + propInfo.Name, propInfo.PropertyType, FieldAttributes.Private);
+                        var field = Expression.Field(proxyBuilder.This, fieldInfo);
+
+                        var value = Expression.Parameter(propInfo.PropertyType, "value");
+
+                        proxyBuilder.DefineProperty(propInfo.Name,
+                            propInfo.PropertyType,
+                            field,
+                            value,
+                            Assign(field, value));
+                    }
+                }
+            }
+ 
+            proxyBuilder.DefineMethod("Reset", null,
+                Block(
+                    If(IsNotNull(modifiedField),
+                        Call("Clear", modifiedField)
+                    )
+                )
+            );
+
+            var propNameParam = Parameter(typeof(string), "propName");
+            proxyBuilder.DefineMethod("IsSet",
+                new[] { propNameParam },
+                Block(
+                    Variable("result", Constant(false), out Expression result),
+                    If(IsNotNull(modifiedField),
+                        Assign(result, Call("Contains", modifiedField, propNameParam))
+                    ),
+                    Result(result)
+                )
+            );
+
+            proxyBuilder.AutoImplementInterface(type);
+
+            proxyBuilder.AutoImplementInterface(typeof(IPatch));
+
+            return proxyBuilder.Create();
+        }
+
+        static Type CreateClassProxy(Type type)
+        {
             if (type.GetConstructor(new Type[0]) == null)
                 throw new PatchProxyTypeException($"Type {type} doesn't have an empty constructor.");
 
@@ -59,9 +127,7 @@ namespace Detached.PatchTypes
                 if (propInfo.CanRead && propInfo.CanWrite && propInfo.GetSetMethod().IsVirtual)
                 {
                     ParameterExpression valueExpr = Parameter(propInfo.PropertyType, "value");
-
-                    var baseGet = Call(proxyBuilder.Base, propInfo.GetGetMethod());
-
+                     
                     proxyBuilder.OverrideMethod(propInfo.GetSetMethod(),
                         new[] { valueExpr },
                         Block(
