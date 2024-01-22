@@ -1,35 +1,37 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>6.0.5</Version>
-    <Authors>Leonardo Porro</Authors>
-    <Company>Leonardo Porro</Company>
-    <Product>Detached Patch Types</Product>
-    <Description>Allows to create a proxy type of a given DTO that implements IPatch interface and allows to check for dirty (or set) properies. It also provides a JsonConverter that handles IPatch types.
-This library is a part of Detached.Mappers.</Description>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageIcon>logo.png</PackageIcon>
-    <PackageProjectUrl>https://github.com/leonardoporro/Detached-PatchTypes</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/leonardoporro/Detached-PatchTypes</RepositoryUrl>
-    <PackageTags>patch, proxy, dto, dirty, undefined, json</PackageTags>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>net8.0;net7.0;net6.0</TargetFrameworks>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<Version>$(Version)</Version>
+		<Authors>Leonardo Porro</Authors>
+		<Company>Leonardo Porro</Company>
+		<Product>Detached Patch Types</Product>
+		<Description>
+			Allows to create a proxy type of a given DTO that implements IPatch interface and allows to check for dirty (or set) properies. It also provides a JsonConverter that handles IPatch types.
+			This library is a part of Detached.Mappers.
+		</Description>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<PackageIcon>logo.png</PackageIcon>
+		<PackageProjectUrl>https://github.com/leonardoporro/Detached-PatchTypes</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/leonardoporro/Detached-PatchTypes</RepositoryUrl>
+		<PackageTags>patch, proxy, dto, dirty, undefined, json</PackageTags>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Detached.RuntimeTypes" Version="6.0.5" />
-    <PackageReference Include="System.Text.Json" Version="6.0.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Detached.RuntimeTypes" Version="8.0.0" />
+		<PackageReference Include="System.Text.Json" Version="8.0.1" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Include="..\..\LICENSE">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-    <None Include="..\..\logo.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\LICENSE">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+		<None Include="..\..\logo.png">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+	</ItemGroup>
 
 </Project>

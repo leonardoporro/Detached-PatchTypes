@@ -1,0 +1,42 @@
+name: Release Workflow
+
+on:
+  create:
+    branches:
+      - 'release/*'
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.x.x' # You can adjust the version if needed
+
+    - name: Extract version
+      run: | 
+        version=$(echo "${{ github.ref }}" | sed 's/refs\/heads\/release\///')
+        echo "Version extracted from branch name: $version"
+      id: extract-version
+
+    - name: Build
+      run: | 
+        dotnet restore
+        dotnet build --configuration Release
+    - name: Push
+      run: | 
+        packages=$(find . -name '*.nupkg')
+
+        echo ${{ steps.extract-version.outputs.version }}
+
+        for package in $packages; do
+           dotnet nuget push $package --source https://api.nuget.org/v3/index.json --api-key $NUGET_API_KEY
+        done
+ 
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
